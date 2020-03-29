@@ -1,12 +1,38 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Link} from 'react-router-dom';
 import {FiArrowLeft} from 'react-icons/fi';
+
+import api from '../../services/api';
 
 import './styles.css';
 
 import logoImg from '../../assets/logo.svg';
 export default function NewIncident(){
+    const ongId = localStorage.getItem('ongId');
 
+    const [title, setTitle] = useState('')
+    const [description, setDescription] = useState('')
+    const [value, setValue] = useState('')
+
+
+    async function handleCreation(e){
+        e.preventDefault();
+
+        try{
+            const data = {
+                title,
+                description,
+                value
+            }
+                await api.post('/incidents', data,{headers: {Authorization : ongId}});
+                alert("Criado com sucesso");    
+        }
+
+        catch{
+            alert("Não foi possível criar esse caso. Tente novamente");
+        }
+
+    }
     return(
         <div className="new-incident-container">
             <div className="content">
@@ -21,10 +47,19 @@ export default function NewIncident(){
                     </Link>
                 </section>
                 <form>
-                    <input placeholder= "Titulo do caso" />
-                    <textarea type="" placeholder= "Descrição" />
-                    <input placeholder= "Valor em reais" />
-                    <button className="button" type = "submit">Cadastrar</button>
+                    <input placeholder= "Titulo do caso" 
+                        value = {title}
+                        onChange = {e => setTitle(e.target.value)}
+                    />
+                    <textarea type="" placeholder= "Descrição" 
+                        value = {description}
+                        onChange = {e => setDescription(e.target.value)}
+                    />
+                    <input placeholder= "Valor em reais" 
+                        value = {value}
+                        onChange = {e => setValue(e.target.value)}
+                    />
+                    <button className="button" type = "submit" onClick = {handleCreation}>Cadastrar</button>
                 </form>
             </div>
         </div>
